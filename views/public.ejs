@@ -1,0 +1,57 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Most Popular Public Movies</h1>
+    <link rel="stylesheet" href="/css/style.css">
+    <div id="publicMoviesList"></div>
+</div>
+
+<script>
+    fetch('/public-movies', {
+        headers: { 'Accept': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(movies => {
+        const listDiv = document.getElementById('publicMoviesList');
+        if (movies.length === 0) {
+            listDiv.innerHTML = "<p>No public movies found.</p>";
+            return;
+        }
+        movies.forEach(movie => {
+            movie.links.forEach(link => {
+                if (link.visibility === "public") {
+                    const movieItem = document.createElement('div');
+                    movieItem.classList.add("card");
+                    movieItem.innerHTML = `
+                        <h3>${movie.title}</h3>
+                        <img src="https://img.omdbapi.com/?i=${movie.movieID}&apikey=20468f26" style="width: 150px;" />
+                        <p><strong>Clicks:</strong> ${link.clicks}</p>
+                        <a href="${link.link}" target="_blank" onclick="trackClick(event, '${movie.movieID}', '${link.link}')">View</a>
+                    `;
+                    listDiv.appendChild(movieItem);
+                }
+            });
+        });
+    })
+    .catch(error => console.error('Error fetching public movies:', error));
+
+    function trackClick(event, movieID, link) {
+        event.preventDefault();
+        if (!/^https?:\/\//.test(link)) {
+            console.error("Invalid link format:", link);
+            alert("Invalid link format! Please make sure the link starts with http:// or https://");
+            return;
+        }
+        fetch('/track-click', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ movieID, link })
+        })
+        .then(() => {
+            window.open(link, '_blank');
+        })
+        .catch(error => console.error('Error tracking click:', error));
+    }
+</script>
+
+<%- include('partials/footer') %>

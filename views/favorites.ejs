@@ -1,0 +1,66 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Your Favorite Movies</h1>
+    <link rel="stylesheet" href="/css/style.css">
+    <div id="favoritesList">
+        <% if (favorites.length > 0) { %>
+            <% favorites.forEach(movie => { %>
+                <div class="card">
+                    <h3><%= movie.title %></h3>
+                    <div id="details-<%= movie.movieID %>"></div>
+                    <img id="poster-<%= movie.movieID %>" alt="<%= movie.title %>" style="max-width: 200px; margin: 10px auto;" />
+                    <button onclick="removeFromFavorites('<%= movie.movieID %>', '<%= movie.title %>')">Remove from Favorites</button>
+                </div>
+                <script>
+                    fetch(`https://www.omdbapi.com/?apikey=20468f26&i=<%= movie.movieID %>`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const detailsDiv = document.getElementById('details-<%= movie.movieID %>');
+                            const posterImg = document.getElementById('poster-<%= movie.movieID %>');
+                            detailsDiv.innerHTML = `
+                                <p><strong>Genre:</strong> ${data.Genre}</p>
+                                <p><strong>Director:</strong> ${data.Director}</p>
+                                <p><strong>Actors:</strong> ${data.Actors}</p>
+                                <p><strong>Plot:</strong> ${data.Plot}</p>
+                            `;
+                            posterImg.src = data.Poster !== 'N/A' ? data.Poster : '/images/placeholder.jpg';
+                        });
+                </script>
+            <% }) %>
+        <% } else { %>
+            <p>You have no favorite movies.</p>
+        <% } %>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function removeFromFavorites(movieID, movieTitle) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `You are about to remove "${movieTitle}" from your favorites.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/remove-from-favorites', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ movieID })
+                }).then(() => {
+                    Swal.fire('Removed!', `"${movieTitle}" has been removed from your favorites.`, 'success').then(() => {
+                        location.reload();
+                    });
+                });
+            }
+        });
+    }
+</script>
+
+
+<%- include('partials/footer') %>

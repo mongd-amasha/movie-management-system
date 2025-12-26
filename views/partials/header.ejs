@@ -1,0 +1,31 @@
+<header>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">Mongd Amasha - 326534484 | Jawad Ayoub - 324994102 </a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <% if (user) { %>
+                    <a href="/favorites">My Favorites</a>
+                    <a href="/public-movies">Public Movies</a>
+                    <% if (user.role === 'admin') { %>
+                        <a href="/admin">Admin Panel</a>
+                    <% } %>
+                    <span class="nav-links" data-email="<%= user.email %>">Welcome, <%= user.name %></span>
+                    <a href="#" onclick="logout()">Logout</a>
+                <% } else { %>
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<script>
+    function logout() {
+        fetch('/logout', { method: 'GET' }).then(() => {
+            sessionStorage.removeItem('loggedInUser');
+            window.location.href = '/login';
+        });
+    }
+</script>

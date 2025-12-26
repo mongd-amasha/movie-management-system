@@ -1,0 +1,54 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Admin Panel - Movie Links</h1>
+    <link rel="stylesheet" href="/css/style.css">
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Movie Name</th>
+                <th>Movie ID</th>
+                <th>Clicks</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="adminLinksTable"></tbody>
+    </table>
+</div>
+
+<script>
+    fetch('/admin-links')
+        .then(response => response.json())
+        .then(movies => {
+            const tableBody = document.getElementById('adminLinksTable');
+            if (movies.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='5'>No movie links found.</td></tr>";
+                return;
+            }
+
+            movies.forEach(movie => {
+                movie.links.forEach(link => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${movie.userEmail}</td>
+                        <td>${movie.title}</td>
+                        <td>${movie.movieID}</td>
+                        <td>${link.clicks}</td>
+                        <td><button onclick="deleteLink('${movie.movieID}', '${link.link}')">Delete</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        });
+
+    function deleteLink(movieID, link) {
+        fetch('/delete-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ movieID, link })
+        }).then(() => location.reload());
+    }
+</script>
+
+<%- include('partials/footer') %>

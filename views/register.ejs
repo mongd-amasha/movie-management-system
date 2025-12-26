@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <% if (error) { %>
+            <p style="color: red;"><%= error %></p>
+        <% } %>
+        <form action="/register" method="POST" onsubmit="return validateForm()">
+            <input type="text" id="name" name="name" placeholder="Name (Max 50 characters)" maxlength="50" required />
+            <input type="email" id="email" name="email" placeholder="Email" required />
+            <input type="password" id="password" name="password" placeholder="Password (6-15 characters, uppercase, lowercase, digit, special)" required />
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
+            <button type="submit">Register</button>
+        </form>
+        <p>Already registered? <a href="/login">Login</a></p>
+    </div>
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+            if (name.length > 50) {
+                alert('Name cannot exceed 50 characters.');
+                return false;
+            }
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$/;
+            if (!passwordRegex.test(password)) {
+                alert(
+                    'Password must be 6-15 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'
+                );
+                return false;
+            }
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>
+
+<%- include('partials/footer') %>

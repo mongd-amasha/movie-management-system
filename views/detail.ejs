@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Movie Details</h1>
+    <link rel="stylesheet" href="/css/style.css">
+    <div id="movieDetails"></div>
+
+    <h3>Add Your Review & Link</h3>
+    <form id="favoriteForm">
+        <input type="text" id="link" placeholder="Enter a related link">
+        <textarea id="description" placeholder="Enter a description"></textarea>
+        <textarea id="review" placeholder="Enter your review"></textarea>
+
+        <label>
+            <input type="radio" name="visibility" value="public" checked> Public
+        </label>
+        <label>
+            <input type="radio" name="visibility" value="private"> Private
+        </label>
+
+        <button type="submit" class="btn btn-success">Save</button>
+    </form>
+
+    <h3>Movie Links & Reviews</h3>
+    <div id="movieLinks"></div>
+
+    <button onclick="goBack()" class="btn btn-secondary">Back</button>
+    <button onclick="window.location.href='/favorites'" class="btn btn-primary">View Favorites</button>
+    <button id="favoriteButton" class="btn btn-success">Add to Favorites</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/detail.js"></script>
+
+
+<%- include('partials/footer') %>
