@@ -1,4 +1,5 @@
 const express = require('express');
+require("dotenv").config();
 const mongoose = require('mongoose');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
@@ -6,10 +7,11 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const User = require('./models/User');
 const Favorite = require('./models/Favorite');
-const app = express();
-mongoose.connect('mongodb+srv://mongd:su%212J%40pQSD%21YdaT@devcluster.ixq1j.mongodb.net/moviesDB?retryWrites=true&w=majority&appName=devcluster')
+
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('✅ MongoDB Connected'))
 .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
